@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,7 +27,7 @@ public class WorkerThread implements Runnable {
 
     private String message;
     private String url;
-
+    int i=1;
     public WorkerThread(String s, String url) {
         this.message = s;
         this.url = url;
@@ -35,17 +36,21 @@ public class WorkerThread implements Runnable {
     @Override
     public void run() {
 //        System.out.println(Thread.currentThread().getName() + " (Start) message = " + message);
-//        processmessage();//call processmessage method that sleeps the thread for 2 seconds  
-        for (int i = 0; i < 3; i++) {
-            System.out.println(Thread.currentThread().getName() + " (Start) message = " + message + "  " + i);
+
+        for (int i = 0; i < 10; i++) {
+            System.out.println(Thread.currentThread().getName() + " (Start) Request="+"----" + ++i);
+
             sendGet();
+//            processmessage();//call processmessage method that sleeps the thread for 2 seconds  
+
         }
+
         System.out.println(Thread.currentThread().getName() + " (End)");//prints thread name  rationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private void processmessage() {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -58,9 +63,9 @@ public class WorkerThread implements Runnable {
         try {
             obj = new URL(url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            /*HttpURLConnection.setFollowRedirects(false);
-            con.setConnectTimeout(1000000);//request time out
-            con.setReadTimeout(100000);*/
+            HttpURLConnection.setFollowRedirects(true);
+            con.setConnectTimeout(100);//request time out
+//            con.setReadTimeout(1000);
             // optional default is GET
             con.setRequestMethod("GET");
 
@@ -68,8 +73,10 @@ public class WorkerThread implements Runnable {
             con.setRequestProperty("User-Agent", TestThreadPool.USER_AGENT);
 
             int responseCode = con.getResponseCode();
+            String responseMsg = con.getResponseMessage();
             System.out.println("\nSending 'GET' request to URL : " + url);
             System.out.println("Response Code : " + responseCode);
+//            System.out.println("Response Message : " + responseMsg);
 
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
@@ -83,15 +90,23 @@ public class WorkerThread implements Runnable {
 
             //print result
 //            System.out.println(response.toString());
-            System.out.println("done");
+//            System.out.println("done");
 
-        } catch (java.net.SocketTimeoutException e) {
+        }catch (java.net.SocketTimeoutException e) {
             System.out.println("socket exception");
-//            Logger.getLogger(RequestMeter.class.getName()).log(Level.SEVERE, null, e);
-        } catch (MalformedURLException ex) {
+            Logger.getLogger(TestThreadPool.class.getName()).log(Level.SEVERE, null, e);
+        }
+        //catch (TimeoutException  ex) {
+//            System.out.println("socket exception");
+////            Logger.getLogger(RequestMeter.class.getName()).log(Level.SEVERE, null, e);
+//        } 
+        catch (MalformedURLException ex) {
+            System.out.println("MalformedURLException");
             Logger.getLogger(TestThreadPool.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(TestThreadPool.class.getName()).log(Level.SEVERE, null, ex);
+        }catch(Exception e){
+            System.out.println("exception");
         }
 
     }
