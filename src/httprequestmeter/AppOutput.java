@@ -17,7 +17,7 @@ public class AppOutput {
     private Timestamp timestampStart;
     private Timestamp timestampEnd;
     private static long totalTimeConsumed;
-    private static long maxResponceTime;
+    private static long maxResponseTime;
     private static long minResponseTime;
     private long averageResponseTime;
     private static int noOfSuccessfulReq;
@@ -55,12 +55,12 @@ public class AppOutput {
         this.totalTimeConsumed = totalTimeConsumed;
     }
 
-    public long getMaxResponceTime() {
-        return maxResponceTime;
+    public long getMaxResponseTime() {
+        return maxResponseTime;
     }
 
-    public void setMaxResponceTime(long maxResponceTime) {
-        this.maxResponceTime = maxResponceTime;
+    public void setMaxResponseTime(long maxResponseTime) {
+        this.maxResponseTime = maxResponseTime;
     }
 
     public long getMinResponseTime() {
@@ -96,20 +96,27 @@ public class AppOutput {
         this.noOfFailedReq = noOfFailedReq;
     }
 
+    /**
+     * method count thread number
+     */
     public static synchronized void threadCount() {
         noOfThreads++;
     }
 
     /**
      * process request measurement
+     * count success request
+     * count failed request
+     * max response time
+     * min response time
      * @param responseTime
      * @param resposeCode
      */
     public static synchronized void requestMeasurement(long responseTime, int resCode) {
         if (resCode == 200) {
             noOfSuccessfulReq++;
-            if (responseTime > maxResponceTime) {
-                maxResponceTime = responseTime;
+            if (responseTime > maxResponseTime) {
+                maxResponseTime = responseTime;
             }
             if (responseTime < minResponseTime) {
                 minResponseTime = responseTime;
@@ -125,14 +132,14 @@ public class AppOutput {
     public String toString() {
         averageResponseTime=(totalTimeConsumed/ noOfSuccessfulReq);
         return "AppOutput{"
-                + "\ntimestampStart=" + timestampStart
-                + ",\n timestampEnd=" + timestampEnd
-                + ",\n totalTimeConsumed=" + (totalTimeConsumed  / 1000.0)+ " secound "
-                + ",\n maxResponceTime=" + maxResponceTime + " millisecond "
-                + ",\n minResponseTime=" + minResponseTime + " millisecond "
-                + ",\n averageResponseTime=" + averageResponseTime + " millisecond "
-                + ",\n noOfSuccessfulReq=" + noOfSuccessfulReq
-                + ",\n noOfFailedReq=" + noOfFailedReq + "\n}";
+                + " \ntimestampStart = " + timestampStart
+                + ",\n timestampEnd = " + timestampEnd
+                + ",\n totalTimeConsumed = " + (totalTimeConsumed  / 1000.0)+ " secound "
+                + ",\n maxResponceTime = " + maxResponseTime + " millisecond "
+                + ",\n minResponseTime = " + minResponseTime + " millisecond "
+                + ",\n averageResponseTime = " + averageResponseTime + " millisecond "
+                + ",\n noOfSuccessfulReq = " + noOfSuccessfulReq
+                + ",\n noOfFailedReq = " + noOfFailedReq + "\n}";
     }
 
 }

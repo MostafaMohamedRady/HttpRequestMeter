@@ -11,8 +11,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -31,23 +29,17 @@ public class RequestThread implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().getName() + " (Start) message = " + message);
+        System.out.println(Thread.currentThread().getName() + " (Start) Thread = " + message);
         for (int i = 1; i <= userInput.getRequestNum(); i++) {
             System.out.println(Thread.currentThread().getName() + " (Request) =" + "----" + i);
             sendGet();
-//            processmessage();//call processmessage method that sleeps the thread for 2 seconds  
         }
-        System.out.println(Thread.currentThread().getName() + " (End)");//prints thread name  rationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println(Thread.currentThread().getName() + " (End)");
     }
 
-    private void processmessage() {
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * request HTTP/GET to api
+     */
     private void sendGet() {
         URL obj;
         long startTimeMillis=0;
@@ -79,17 +71,13 @@ public class RequestThread implements Runnable {
             //add request header
             con.setRequestProperty("User-Agent", HttpRequestMeter.USER_AGENT);
 
-            responseCode = con.getResponseCode();
+            responseCode = con.getResponseCode();//rescopse
 
             startTimeMillis = System.currentTimeMillis();
 
             String responseMsg = con.getResponseMessage();
-//            System.out.println("\nSending 'GET' request to URL : " + userInput.getUrlApi());
-//            System.out.println("Response Code : " + responseCode);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(con.getInputStream()));
 
-//            InputStream inputStream = con.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
             String inputLine;
             StringBuffer response = new StringBuffer();

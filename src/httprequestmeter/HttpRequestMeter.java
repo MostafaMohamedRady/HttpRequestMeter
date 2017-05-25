@@ -57,8 +57,8 @@ public class HttpRequestMeter {
         //  reading thread num
         System.out.print("#Enter Number Of Threads: ");
         while (!scanner.hasNextInt()) {
-            System.out.println("#Enter Valid Number Of Threads like 1,2.. :");
-            scanner.next(); // this is important!
+            System.out.print("#Enter Valid Number Of Threads like 1,2.. :");
+            scanner.next(); 
         }
         int threadNum = scanner.nextInt();
         userInput.setThreadNum(threadNum);
@@ -66,8 +66,8 @@ public class HttpRequestMeter {
         // reading request num for each thread
         System.out.print("#Enter Request Number For Each Thread: ");
         while (!scanner.hasNextInt()) {
-            System.out.println("#Enter Valid Number like 1,2.. :");
-            scanner.next(); // this is important!
+            System.out.print("#Enter Valid Number like 1,2.. :");
+            scanner.next(); 
         }
         int requestNum = scanner.nextInt();
         userInput.setRequestNum(requestNum);
