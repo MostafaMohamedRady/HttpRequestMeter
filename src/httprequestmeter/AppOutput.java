@@ -16,7 +16,7 @@ public class AppOutput {
     private static int noOfThreads;
     private Timestamp timestampStart;
     private Timestamp timestampEnd;
-    private static double totalTimeConsumed;
+    private static long totalTimeConsumed;
     private static long maxResponceTime;
     private static long minResponseTime;
     private long averageResponseTime;
@@ -47,11 +47,11 @@ public class AppOutput {
         this.timestampEnd = new Timestamp(timestampEnd);
     }
 
-    public double getTotalTimeConsumed() {
+    public long getTotalTimeConsumed() {
         return totalTimeConsumed;
     }
 
-    public void setTotalTimeConsumed(double totalTimeConsumed) {
+    public void setTotalTimeConsumed(long totalTimeConsumed) {
         this.totalTimeConsumed = totalTimeConsumed;
     }
 
@@ -72,6 +72,7 @@ public class AppOutput {
     }
 
     public long getAverageResponseTime() {
+        
         return averageResponseTime;
     }
 
@@ -99,6 +100,11 @@ public class AppOutput {
         noOfThreads++;
     }
 
+    /**
+     * process request measurement
+     * @param responseTime
+     * @param resposeCode
+     */
     public static synchronized void requestMeasurement(long responseTime, int resCode) {
         if (resCode == 200) {
             noOfSuccessfulReq++;
@@ -111,21 +117,22 @@ public class AppOutput {
         } else {
             noOfFailedReq++;
         }
-        
-        totalTimeConsumed += (responseTime / 1000.0);
+
+        totalTimeConsumed += (responseTime);
     }
 
     @Override
     public String toString() {
-        return "AppOutput{" +
-                "\ntimestampStart=" + timestampStart + 
-                ",\n timestampEnd=" + timestampEnd +
-                ",\n totalTimeConsumed=" + totalTimeConsumed + " secound "+
-                ",\n maxResponceTime=" + maxResponceTime + " millisecond "+
-                ",\n minResponseTime=" + minResponseTime + " millisecond "+
-                ",\n averageResponseTime=" + averageResponseTime + " millisecond "+
-                ",\n noOfSuccessfulReq=" + noOfSuccessfulReq + 
-                ",\n noOfFailedReq=" + noOfFailedReq + "\n}";
+        averageResponseTime=(totalTimeConsumed/ noOfSuccessfulReq);
+        return "AppOutput{"
+                + "\ntimestampStart=" + timestampStart
+                + ",\n timestampEnd=" + timestampEnd
+                + ",\n totalTimeConsumed=" + (totalTimeConsumed  / 1000.0)+ " secound "
+                + ",\n maxResponceTime=" + maxResponceTime + " millisecond "
+                + ",\n minResponseTime=" + minResponseTime + " millisecond "
+                + ",\n averageResponseTime=" + averageResponseTime + " millisecond "
+                + ",\n noOfSuccessfulReq=" + noOfSuccessfulReq
+                + ",\n noOfFailedReq=" + noOfFailedReq + "\n}";
     }
 
 }
