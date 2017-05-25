@@ -19,7 +19,7 @@ public class AppOutput {
     private static double totalTimeConsumed;
     private static long maxResponceTime;
     private static long minResponseTime;
-    private int averageResponseTime;
+    private long averageResponseTime;
     private static int noOfSuccessfulReq;
     private static int noOfFailedReq;
 
@@ -71,11 +71,11 @@ public class AppOutput {
         this.minResponseTime = minResponseTime;
     }
 
-    public int getAverageResponseTime() {
+    public long getAverageResponseTime() {
         return averageResponseTime;
     }
 
-    public void setAverageResponseTime(int averageResponseTime) {
+    public void setAverageResponseTime(long averageResponseTime) {
         this.averageResponseTime = averageResponseTime;
     }
 

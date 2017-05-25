@@ -5,15 +5,12 @@
  */
 package httprequestmeter;
 
-import java.awt.PageAttributes.MediaType;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,9 +50,12 @@ public class RequestThread implements Runnable {
 
     private void sendGet() {
         URL obj;
+        long startTimeMillis=0;
+        int responseCode=0;
+        HttpURLConnection con=null;
         try {
             obj = new URL(userInput.getUrlApi());
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con = (HttpURLConnection) obj.openConnection();
 
             boolean redirect = true;
 
@@ -78,42 +78,42 @@ public class RequestThread implements Runnable {
 
             //add request header
             con.setRequestProperty("User-Agent", HttpRequestMeter.USER_AGENT);
-         
-            int responseCode = con.getResponseCode();
 
-            long startTimeMillis = System.currentTimeMillis();
+            responseCode = con.getResponseCode();
+
+            startTimeMillis = System.currentTimeMillis();
 
             String responseMsg = con.getResponseMessage();
 //            System.out.println("\nSending 'GET' request to URL : " + userInput.getUrlApi());
 //            System.out.println("Response Code : " + responseCode);
-//            BufferedReader in = new BufferedReader(
-//                    new InputStreamReader(con.getInputStream()));
-            InputStream inputStream = con.getInputStream();
-            
-            long endTimeMillis = System.currentTimeMillis();
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
 
-            AppOutput.requestMeasurement(endTimeMillis - startTimeMillis, responseCode);
-            
-//            String inputLine;
-//            StringBuffer response = new StringBuffer();
-//            while ((inputLine = in.readLine()) != null) {
-//                response.append(inputLine);
-//            }
-//            in.close();
+//            InputStream inputStream = con.getInputStream();
 
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
 //            System.out.println("done");
         } catch (java.net.SocketTimeoutException e) {
-            e.printStackTrace();
-            Logger.getLogger(HttpRequestMeter.class.getName()).log(Level.SEVERE, null, e);
+//            e.printStackTrace();
+//            Logger.getLogger(HttpRequestMeter.class.getName()).log(Level.SEVERE, null, e);
         } catch (MalformedURLException ex) {
-            ex.printStackTrace();
-            Logger.getLogger(HttpRequestMeter.class.getName()).log(Level.SEVERE, null, ex);
+//            ex.printStackTrace();
+//            Logger.getLogger(HttpRequestMeter.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(HttpRequestMeter.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(HttpRequestMeter.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception e) {
             e.printStackTrace();
+        }finally{
+            con.disconnect();
         }
+        long endTimeMillis = System.currentTimeMillis();
 
+        AppOutput.requestMeasurement(endTimeMillis - startTimeMillis, responseCode);
     }
 
 }

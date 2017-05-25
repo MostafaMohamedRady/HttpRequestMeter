@@ -8,6 +8,8 @@ package httprequestmeter;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -16,6 +18,7 @@ import java.util.concurrent.Executors;
 public class HttpRequestMeter {
 
     public static String USER_AGENT = "User-Agent\", \"Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 (.NET CLR 3.5.30729)";
+    public static String regex = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 
     public static void main(String[] args) {
 
@@ -37,6 +40,10 @@ public class HttpRequestMeter {
         // reading Api Url
         System.out.print("#Enter Api Url: ");
         String apiUrl = scanner.next();
+        while (!validateUrl(apiUrl)) {
+            System.out.print("#Enter valid Api Url like 'http://www.google.com/search?q=developer' : ");
+            apiUrl = scanner.next();
+        }
         userInput.setUrlApi(apiUrl);
 
         // reading timeout
@@ -48,8 +55,8 @@ public class HttpRequestMeter {
 
         ExecutorService executor = Executors.newFixedThreadPool(threadNum);//creating a pool of 5 threads
 //        String url = "http://www.google.com/search?q=mkyong";
-        
-        AppOutput appOutput=new AppOutput();
+
+        AppOutput appOutput = new AppOutput();
         appOutput.setTimestampStart(System.currentTimeMillis());
         for (int i = 1; i <= threadNum; i++) {
             Runnable worker = new RequestThread(" " + i, userInput);
@@ -61,8 +68,19 @@ public class HttpRequestMeter {
 
         System.out.println("Finished all threads");
         appOutput.setTimestampEnd(System.currentTimeMillis());
-        System.out.println("httprequestmeter");
+
+        System.out.println("***************************************");
         System.out.println(appOutput.toString());
+    }
+
+    private static boolean validateUrl(String s) {
+        try {
+            Pattern patt = Pattern.compile(regex);
+            Matcher matcher = patt.matcher(s);
+            return matcher.matches();
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
 }
